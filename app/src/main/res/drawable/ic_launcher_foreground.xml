@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Calendar body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,34 h36 a5,5 0 0 1 5,5 v33 a5,5 0 0 1 -5,5 h-36 a5,5 0 0 1 -5,-5 v-33 a5,5 0 0 1 5,-5 z" />
+    <!-- Calendar header band -->
+    <path
+        android:fillColor="#C9CEF5"
+        android:pathData="M36,34 h36 a5,5 0 0 1 5,5 v6 h-46 v-6 a5,5 0 0 1 5,-5 z" />
+    <!-- Rings -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,28 m-2.2,0 a2.2,2.2 0 1,0 4.4,0 a2.2,2.2 0 1,0 -4.4,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,28 m-2.2,0 a2.2,2.2 0 1,0 4.4,0 a2.2,2.2 0 1,0 -4.4,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42.6,26 h2.8 v8 h-2.8 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M62.6,26 h2.8 v8 h-2.8 z" />
+    <!-- Clock hands inside calendar -->
+    <path
+        android:strokeColor="#4F5BD5"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M54,60 L54,52" />
+    <path
+        android:strokeColor="#4F5BD5"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M54,60 L61,60" />
+    <path
+        android:fillColor="#4F5BD5"
+        android:pathData="M54,60 m-2.4,0 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0" />
+</vector>
