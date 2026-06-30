@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Age Calculator — Preview</title>
+<style>
+  :root{
+    --indigo:#4F5BD5; --indigo-on:#fff; --bg:#F7F8FC; --surface:#fff;
+    --on-surface:#1A1B22; --on-variant:#45464F; --outline:#C5C6D9;
+    --teal-c:#B2DFDB; --teal-on:#00251F; --err-c:#FCDAD6; --err-on:#7a1d12;
+  }
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  body{margin:0;background:#e9eaf3;display:flex;justify-content:center;padding:24px}
+  .phone{width:390px;max-width:100%;background:var(--bg);border-radius:36px;
+    box-shadow:0 24px 60px rgba(40,44,90,.25);overflow:hidden}
+  .topbar{text-align:center;padding:18px;font-weight:700;font-size:19px;color:var(--on-surface)}
+  .body{padding:8px 16px 24px;display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--surface);border-radius:24px;padding:20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  label{display:block;font-size:12px;color:var(--on-variant);margin-bottom:6px;font-weight:600}
+  .field{display:flex;align-items:center;border:1px solid var(--outline);border-radius:16px;
+    padding:0 8px 0 14px;margin-bottom:16px;background:var(--surface)}
+  .field input{border:0;outline:0;flex:1;padding:14px 0;font-size:16px;background:transparent;color:var(--on-surface)}
+  .field button{border:0;background:transparent;cursor:pointer;font-size:20px;padding:8px;color:var(--indigo)}
+  .calc{width:100%;border:0;background:var(--indigo);color:var(--indigo-on);
+    padding:16px;border-radius:16px;font-size:16px;font-weight:600;cursor:pointer}
+  .primary{background:var(--indigo);color:#fff;border-radius:24px;padding:24px;text-align:center}
+  .primary .lbl{font-size:12px;letter-spacing:.5px;opacity:.8}
+  .ages{display:flex;justify-content:center;gap:24px;margin-top:10px;align-items:flex-end}
+  .ages .n{font-size:34px;font-weight:800;line-height:1}
+  .ages .u{font-size:13px;opacity:.9}
+  .bday{background:var(--teal-c);color:var(--teal-on);border-radius:20px;padding:18px;display:flex;gap:14px;align-items:center}
+  .bday .ic{font-size:30px}
+  .bday .t{font-weight:600;font-size:15px}
+  .bday .s{font-size:13px;opacity:.85;margin-top:3px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .dc{background:var(--surface);border-radius:18px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  .dc .l{font-size:11px;letter-spacing:.5px;color:var(--on-variant);text-transform:uppercase}
+  .dc .v{font-size:18px;font-weight:600;color:var(--on-surface);margin-top:6px}
+  .err{background:var(--err-c);color:var(--err-on);border-radius:16px;padding:14px;font-size:14px}
+  .note{text-align:center;font-size:12px;color:#888;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">Age Calculator</div>
+  <div class="body">
+    <div class="card">
+      <label>Date of Birth</label>
+      <div class="field">
+        <input id="dob" placeholder="DD/MM/YYYY">
+        <button onclick="pick('dob')">📅</button>
+      </div>
+      <label>Age at the Date</label>
+      <div class="field">
+        <input id="to" placeholder="DD/MM/YYYY">
+        <button onclick="pick('to')">📅</button>
+      </div>
+      <button class="calc" onclick="calc()">Calculate Age</button>
+    </div>
+    <div id="out"></div>
+  </div>
+</div>
+
+<input type="date" id="picker" style="position:fixed;opacity:0;pointer-events:none">
+
+<script>
+const fmt = d => d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+document.getElementById('to').value = fmt(new Date());
+
+function pick(id){
+  const p = document.getElementById('picker');
+  p.onchange = () => {
+    if(!p.value) return;
+    const [y,m,d] = p.value.split('-').map(Number);
+    document.getElementById(id).value = fmt(new Date(y,m-1,d));
+  };
+  p.showPicker ? p.showPicker() : p.click();
+}
+
+function parse(s){
+  s=s.trim(); if(!s) return null;
+  let m;
+  if(m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/)) return new Date(+m[3],+m[2]-1,+m[1]);
+  if(m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)) return new Date(+m[1],+m[2]-1,+m[3]);
+  const d=new Date(s); return isNaN(d)?null:d;
+}
+
+const zodiac = d => {
+  const day=d.getDate(), mo=d.getMonth()+1;
+  const t=[[1,20,"Capricorn","Aquarius"],[2,19,"Aquarius","Pisces"],[3,21,"Pisces","Aries"],
+    [4,20,"Aries","Taurus"],[5,21,"Taurus","Gemini"],[6,21,"Gemini","Cancer"],
+    [7,23,"Cancer","Leo"],[8,23,"Leo","Virgo"],[9,23,"Virgo","Libra"],
+    [10,23,"Libra","Scorpio"],[11,22,"Scorpio","Sagittarius"],[12,22,"Sagittarius","Capricorn"]];
+  const r=t[mo-1]; return day<r[1]?r[2]:r[3];
+};
+
+function ymd(b,t){
+  let y=t.getFullYear()-b.getFullYear(), m=t.getMonth()-b.getMonth(), d=t.getDate()-b.getDate();
+  if(d<0){m--; d+=new Date(t.getFullYear(),t.getMonth(),0).getDate();}
+  if(m<0){y--; m+=12;}
+  return [y,m,d];
+}
+
+function calc(){
+  const b=parse(document.getElementById('dob').value), t=parse(document.getElementById('to').value);
+  const out=document.getElementById('out');
+  if(!b){out.innerHTML='<div class="err">Enter a valid date of birth (e.g. 05/03/1990).</div>';return;}
+  if(!t){out.innerHTML='<div class="err">Enter a valid target date.</div>';return;}
+  if(b>t){out.innerHTML='<div class="err">Date of birth must be on or before the target date.</div>';return;}
+
+  const [Y,M,D]=ymd(b,t);
+  const days=Math.round((t-b)/864e5);
+  const weeks=Math.floor(days/7);
+  const months=(t.getFullYear()-b.getFullYear())*12+(t.getMonth()-b.getMonth())-(t.getDate()<b.getDate()?1:0);
+  const hours=days*24, mins=hours*60, secs=mins*60;
+  const dow=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const born=dow[b.getDay()];
+
+  let nb=new Date(t.getFullYear(),b.getMonth(),b.getDate());
+  if(nb<t) nb=new Date(t.getFullYear()+1,b.getMonth(),b.getDate());
+  const today = nb.getTime()===t.getTime();
+  const until=Math.round((nb-t)/864e5);
+  const turning=nb.getFullYear()-b.getFullYear();
+  const n=x=>x.toLocaleString('en-US');
+
+  out.innerHTML=`
+    <div class="primary">
+      <div class="lbl">YOUR AGE</div>
+      <div class="ages">
+        <div><div class="n">${Y}</div><div class="u">years</div></div>
+        <div><div class="n">${M}</div><div class="u">months</div></div>
+        <div><div class="n">${D}</div><div class="u">days</div></div>
+      </div>
+    </div>
+    <div class="bday" style="margin-top:16px">
+      <div class="ic">🎂</div>
+      <div>
+        <div class="t">${today?'Happy Birthday! 🎉':'Next Birthday'}</div>
+        <div class="s">${today?('Today you turn '+turning+'!'):
+          (until+' days to go — turning '+turning+' on '+fmt(nb)+' ('+dow[nb.getDay()]+')')}</div>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:16px">
+      ${cell('Born on',born)}${cell('Zodiac sign',zodiac(b))}
+      ${cell('Total months',n(months))}${cell('Total weeks',n(weeks))}
+      ${cell('Total days',n(days))}${cell('Total hours',n(hours))}
+      ${cell('Total minutes',n(mins))}${cell('Total seconds',n(secs))}
+    </div>
+    <div class="note">This is a browser preview of the Android app's design & logic.</div>`;
+}
+const cell=(l,v)=>`<div class="dc"><div class="l">${l}</div><div class="v">${v}</div></div>`;
+</script>
+</body>
+</html>
